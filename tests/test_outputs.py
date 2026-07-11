@@ -9,30 +9,30 @@ def _load():
 
 
 def test_report_exists():
-    """Success criterion 1: the agent must write the report to /app/report.json."""
+    """The agent must write the report to /app/report.json."""
     assert REPORT.exists(), "no /app/report.json found"
 
 
 def test_report_is_valid_json_object():
-    """Success criterion 2: report.json must contain a single JSON object."""
+    """report.json must contain a single JSON object."""
     assert isinstance(_load(), dict), "report.json is not a JSON object"
 
 
 def test_required_keys_present():
-    """Success criterion 3: report.json must contain total_requests, unique_ips, and top_path."""
+    """report.json must contain total_requests, unique_ips, and top_path."""
     assert {"total_requests", "unique_ips", "top_path"} <= _load().keys()
 
 
 def test_total_requests_correct():
-    """Success criterion 4: total_requests must equal the number of log entries (6)."""
+    """total_requests must equal the number of log entries (6)."""
     assert _load()["total_requests"] == 6
 
 
 def test_unique_ips_correct():
-    """Success criterion 5: unique_ips must equal the count of distinct client IPs (3)."""
+    """unique_ips must equal the count of distinct client IPs (3)."""
     assert _load()["unique_ips"] == 3
 
 
 def test_top_path_correct():
-    """Success criterion 6: top_path must be the most-requested path (/index.html)."""
+    """top_path must be the most-requested path (/index.html)."""
     assert _load()["top_path"] == "/index.html"
