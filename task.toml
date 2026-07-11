@@ -1,4 +1,4 @@
-artifacts = "/app/out.json"
+artifacts = ["/app/report.json"]
 
 [task]
 name = "dynamo/log-report"
@@ -12,9 +12,21 @@ artifact_type = ["text_or_log_file", "generated_output_artifact"]
 expert_time_estimate_hours = 0.3
 model_tested = "GPT-5.4"
 agent_tested = "Terminus-2"
-difficulty_explanation = "Parse a small access log and emit summary stats."
-solution_explanation = "Read the log, count requests/unique IPs, find the top path."
-verification_explanation = "Check the report file."
+difficulty_explanation = "The agent must parse an Apache-style access log, correctly
+identifying the client IP as the first field and extracting the request path from the
+quoted HTTP request line, then compute three aggregate statistics (total request count,
+distinct client count, most-requested path) and emit them under an exact JSON schema at
+a specific path."
+solution_explanation = "Read /app/access.log line by line, skipping blank lines. Count
+total non-empty lines for total_requests, collect the first whitespace-separated field
+of each line into a set for unique_ips, and extract the path from each HTTP request line
+with a regex, tallying occurrences with a Counter to find the most frequent path for
+top_path. Write the three values as a JSON object to /app/report.json."
+verification_explanation = "The verifier loads /app/report.json, asserts it is a single
+JSON object containing exactly the keys total_requests, unique_ips, and top_path, then
+checks each value against the ground truth computed from the fixed access.log fixture:
+total_requests == 6, unique_ips == 3, top_path == '/index.html'. Missing keys, wrong
+types, wrong values, or no file at all all fail."
 
 [verifier]
 timeout_sec = 120.0
